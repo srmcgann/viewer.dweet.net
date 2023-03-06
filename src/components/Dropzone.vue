@@ -12,7 +12,7 @@
     @dragleave="dragLeaveHandler"
     @mouseup="mouseupHandler"
   >
-    <DZTools :state="state" :caption="caption"/>
+    <DZTools v-if="0" :state="state" :caption="caption"/>
     <div v-if="!showProgress && !finished">
       <div v-for="(file, idx) in state.loggedinUserFiles" :key="idx" class="fileContainer">
         <File :state="state" :file="file" :dropzone="dropzone"/>

@@ -13,10 +13,6 @@ module.exports = {
     devMiddleware: {
       publicPath: '/'
     },
-    https: {
-      key: fs.readFileSync('.certs/privkey1.pem'),
-      cert: fs.readFileSync('.certs/fullchain1.pem'),
-    },
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Max-Age': '1000',

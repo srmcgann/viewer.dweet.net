@@ -1,10 +1,10 @@
 <template>
   <div class="header">
     <div
-      v-if="state.loggedin"
+      v-if="0 && state.loggedin"
       v-html="headerText()"
     ></div>
-    <HeaderTools :state="state"/>
+    <HeaderTools v-if="0" :state="state"/>
   </div>
 </template>
 

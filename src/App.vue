@@ -330,6 +330,26 @@ export default {
         }
       })
     },
+    loadAsset(slug){
+      let sendData = {
+        slug
+      }
+      fetch(this.state.baseURL + '/loadAsset.php',  this.state.fetchObj(sendData))
+      .then(json=>json.json()).then(data=>{
+        if(data[0]){
+          console.log('loadAsset[viewer].php[App.vue]',data)
+          this.state.loggedinUserFiles = [] //data[1]
+          this.$nextTick(()=>{
+            this.state.loggedin = true
+            this.state.loggedinUserFiles = data[1]
+            this.$nextTick(()=>this.state.positionFilesAbsolutely())
+          })
+        }else{
+          console.log('loadAsset[viewer][App.vue]',data)
+          alert('there was an error loading the asset. consarnit!')
+        }
+      })
+    },
     setupListeners(){
       document.body.onmousemove = e => {
         e.preventDefault()
@@ -396,6 +416,7 @@ export default {
     }
   },
   mounted(){
+    
     this.state.view = this.view
     this.state.login = this.login
     this.state.logout = this.logout
@@ -410,8 +431,9 @@ export default {
     this.state.closeModals = this.closeModals
     this.state.loadLoggedInUserData = this.loadLoggedInUserData
     this.state.positionFilesAbsolutely = this.positionFilesAbsolutely
-    this.checkCookie()
-    this.setupListeners()
+    //this.checkCookie()
+    //this.setupListeners()
+    this.loadAsset(window.globalAsset)
   }
 }
 
