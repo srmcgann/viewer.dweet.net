@@ -12,10 +12,12 @@
         <span class="headerToolsCheckboxLabel" style="margin-top: 30px">snap to grid</span>
       </label>
       <button
+        v-if="0"
         class="button"
         @click="logout()"
       >logout</button><br>
       <button
+        v-if="0"
         class="button"
         @click="settings()"
       >settings</button>
@@ -23,11 +25,13 @@
     <div v-else>
       <button
         class="button"
+        v-if="0"
         :class="{'float': state.registerModalVisible}"
         @click="login()"
       >login</button><br>
       <button
         class="button"
+        v-if="0"
         :class="{'float': state.loginModalVisible}"
         @click="register()"
       >register</button>
@@ -56,6 +60,8 @@ export default {
       this.state.register()
     },
     toggleUserProperty(property){
+      this.$nextTick(()=>this.state.setCookie())
+      return
       let sendData = {
         user: this.state.loggedinUserName,
         passhash: this.state.loggedinUserHash,
@@ -96,6 +102,7 @@ export default {
   .headerTools{
     position: absolute;
     top:0;
+    display: none;
     right: 0;
     padding: 5px;
     color: #fff;

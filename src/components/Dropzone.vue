@@ -6,13 +6,13 @@
       'fileUploading': showProgress,
       'finished': finished
     }"
-    ref="drop_zone"
+    ref="drop_zone_viewer"
     @drop="dropHandler"
     @dragover="dragOverHandler"
     @dragleave="dragLeaveHandler"
     @mouseup="mouseupHandler"
   >
-    <DZTools v-if="0" :state="state" :caption="caption"/>
+    <DZTools v-if="1" :state="state" :caption="caption"/>
     <div v-if="!showProgress && !finished">
       <div v-for="(file, idx) in state.loggedinUserFiles" :key="idx" class="fileContainer">
         <File :state="state" :file="file" :dropzone="dropzone"/>
@@ -21,7 +21,7 @@
     <div v-else>
       <div v-if="finished">
         <div class="fileContainer" :key="idx" v-for="file in state.loggedinUserFiles" >
-          <File :state="state" :file="file" />
+          <File :state="state" :file="file" :dropzone="dropzone"/>
         </div>
       </div>
       <div v-else>
@@ -57,6 +57,7 @@ export default {
   data(){
     return {
       testData : "it works!",
+      dropzone: null,
       draggingOver: false,
       showProgress: false,
       fileList: [],
@@ -67,9 +68,6 @@ export default {
     }
   },
   computed:{
-    dropzone(){
-      return this.$refs['drop_zone']
-    },
     filteredFiles(){
       let rw = 100
       let cl = 5
@@ -90,6 +88,7 @@ export default {
       return name.length <= 30 ? name:name.substring(0, 20) + '...' + name.substring(name.length-6)
     },
     dropHandler(e){
+      return
       let error = false
       e.preventDefault()
       if(this.showProgress) return
@@ -247,6 +246,8 @@ export default {
     }
   },
   mounted(){
+    this.dropzone = this.$refs['drop_zone_viewer']
+    console.log(this.dropzone)
     window.onmousemove=()=>{
       this.draggingOver = false
     }

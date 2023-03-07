@@ -9,22 +9,6 @@
       ref="dragHandle"
       @mousedown="mousedown"
     ></div>
-    <div class="fileButtons">
-      <label :for="'privateCheckbox' + file.id" :key="'cblabel'+file.id" class="checkboxLabel" style="margin:2px;display:unset;transform: scale(.75);" :title="'toggle public visibility of this '+(+file.folder?'folder':'file')+`\n[`+file.name+' is currently '+(file.private==false?'PUBLIC':'PRIVATE')+']'">
-        <input type="checkbox" :key="'cbkey'+file.id" :id="'privateCheckbox' + file.id" v-model="file.private" @input="togglePublic()">
-        <span class="checkmark" :class="{'warning': file.private==false}" style=";border: 1px solid #fff8"></span>
-      </label>
-      <button @click="renameFile()" :title="'rename'" class="fileButton renameButton"></button>
-      <button v-if="file.type != 'folder'" @click="downloadFile()" :title="'download file'" class="fileButton downloadButton"></button>
-      <button @click="deleteFile()" :title="'delete'" class="fileButton deleteButton"></button>
-    </div>
-    <div
-      @click="copyLink()"
-      class="file"
-      :ref="file.id"
-      :title="`copy link to -> ${file.name}`"
-    >
-    </div>
     <div
       @click="load()"
       class="file"
@@ -141,6 +125,7 @@ export default {
       thumbEl.style.position = "absolute"
       this.state.curFileDragging = thumbEl
       this.state.curFileDragging.file = this.file
+      console.log(this.dropzone)
       this.state.curFileDragging.dropzone = this.dropzone
       this.state.cursorX = rect.x - e.pageX 
       this.state.cursorY = rect.y - e.pageY
@@ -164,6 +149,7 @@ export default {
       fileElement.style.color = '#fff'
       fileElement.style.cursor = 'default'
     }
+    this.load()
   }
 }
 
@@ -194,12 +180,12 @@ export default {
     width: 125px;
     height: 100px;
     margin-top: -20px;
-    background: #f004;
+    background: #f000;
     position: absolute;
     z-index: 10;
   }
   .dragHandle:hover{
-    background: #0f04;
+    background: #0f00;
   }
   .privateCheckbox{
   }

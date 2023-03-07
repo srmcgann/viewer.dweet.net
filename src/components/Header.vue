@@ -4,7 +4,7 @@
       v-if="0 && state.loggedin"
       v-html="headerText()"
     ></div>
-    <HeaderTools v-if="0" :state="state"/>
+    <HeaderTools v-if="1" :state="state"/>
   </div>
 </template>
 

@@ -46,8 +46,8 @@ export default {
         cursorX: null,
         cursorY: null,
         loadLoggedInUserData: null,
-        loggedinUserBasicIcons: '',
-        loggedinUserSnapToGrid: '',
+        loggedinUserBasicIcons: false,
+        loggedinUserSnapToGrid: false,
         positionFilesAbsolutely: null,
         loggedinUserID: '',
         curFileDragging: null,
@@ -125,14 +125,14 @@ export default {
       cookies.split(';').map(v=>{
         document.cookie = v + '; expires=' + (new Date(0)).toUTCString() + '; path=/; domain=' + this.state.rootDomain
       })
-      document.cookie = 'loggedinUser=' + this.state.loggedinUserName + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      document.cookie = 'loggedinUserLocation=' + this.state.loggedinUserLocation + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      //document.cookie = 'basicIcons=' + this.state.loggedinUserBasicIcons + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      //document.cookie = 'snapToGrid=' + this.state.loggedinUserSnapToGrid + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      document.cookie = 'minimized=' + this.state.minimized + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      document.cookie = 'loggedinUserID=' + this.state.loggedinUserID + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      document.cookie = 'loggedinUserHash=' + this.state.loggedinUserHash + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
-      document.cookie = 'token=' + this.state.token + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'loggedinUser=' + this.state.loggedinUserName + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'loggedinUserLocation=' + this.state.loggedinUserLocation + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      document.cookie = 'basicIcons=' + (this.state.loggedinUserBasicIcons) + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      document.cookie = 'snapToGrid=' + (this.state.loggedinUserSnapToGrid) + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'minimized=' + this.state.minimized + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'loggedinUserID=' + this.state.loggedinUserID + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'loggedinUserHash=' + this.state.loggedinUserHash + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
+      //document.cookie = 'token=' + this.state.token + '; expires=' + (new Date((Date.now()+3153600000000))).toUTCString() + '; path=/; domain=' + this.state.rootDomain
     },
     fetchObj(sendData){
       let fetchObj
@@ -259,8 +259,17 @@ export default {
           case 'loggedinUserHash':
             passhash = pair[1]
           break
+          case 'basicIcons':
+            console.log('basicIcons: '+pair[1])
+            this.state.loggedinUserBasicIcons = !!!eval(pair[1]) 
+          break
+          case 'snapToGrid':
+            console.log('snapToGrid: '+pair[1])
+            this.state.loggedinUserSnapToGrid = !!!eval(pair[1])
+          break
         }
       })
+      return
       if(user && passhash && id){
         let sendData = {
           user,
@@ -393,7 +402,7 @@ export default {
               if(v.type == 'folder'){
                 console.log('moveFile -> ', this.state.curFileDragging.file, v)
                 let cfdf = this.state.curFileDragging.file
-                this.moveFile(cfdf, v)
+                //this.moveFile(cfdf, v)
               }
             }
           }) 
@@ -431,8 +440,8 @@ export default {
     this.state.closeModals = this.closeModals
     this.state.loadLoggedInUserData = this.loadLoggedInUserData
     this.state.positionFilesAbsolutely = this.positionFilesAbsolutely
-    //this.checkCookie()
-    //this.setupListeners()
+    this.checkCookie()
+    this.setupListeners()
     this.loadAsset(window.globalAsset)
   }
 }

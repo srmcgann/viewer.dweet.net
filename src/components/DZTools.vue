@@ -77,6 +77,7 @@ export default {
     top:0;
     min-height: 95px;
     left: 0;
+    display: none;
     max-width: calc(100% - 10px);
     margin-top: 5px;
     width: 100vw;
