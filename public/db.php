@@ -39,4 +39,33 @@
   function getMimeTypeFromFileContent($content){
     return (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
   }
+
+  $meta = [];
+  $sql = 'SELECT * FROM files WHERE id = ' . alphaToDec(str_replace('/', '', $_GET['asset']));
+  $res = mysqli_query($link, $sql);
+  if(mysqli_num_rows($res)){
+    $row = mysqli_fetch_assoc($res);
+    if($row['type'] == 'folder'){
+      $meta['description'] = 'shared directory';
+      $image = 'https://jsbot.cantelope.org/uploads/2jP7OJ.png';
+    } else {
+      if(strpos($row['type'], 'image') !== false){
+        $meta['description'] = 'shared image';
+        $image = "$baseAssetsURL/{$row['hash']}";
+      } else {
+        $meta['description'] = 'shared file';
+        $image = 'https://jsbot.cantelope.org/uploads/2bceZU.png';
+      }
+    }
+    $meta['title'] = $row['name'];
+    $meta['image'] = $image;
+    $meta['url'] = 'https://viewer.dweet.net/' . $_GET['asset'];
+    $meta['twitter:card'] = $image;
+  } else {
+    $meta['title'] = 'pshare viewer';
+    $meta['description'] = 'content tool';
+    $meta['image'] = '';
+    $meta['url'] = 'https://viewer.dweet.net';
+    $meta['twitter:card'] = '';
+  }
 ?>

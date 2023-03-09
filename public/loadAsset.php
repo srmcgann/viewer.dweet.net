@@ -10,9 +10,24 @@
   $res = mysqli_query($link, $sql);
   if(mysqli_num_rows($res)){
     $success = true;
-    $files[] = mysqli_fetch_assoc($res);
+    $row = mysqli_fetch_assoc($res);
+    if($row['type'] == 'folder'){
+      $location = $row['location'] . $row['name'] . '/';
+      $sql = 'SELECT * FROM files WHERE location = "'.$location.'" AND userID = ' . $row['userID'] . ' AND private = 0 AND type <> "folder"';
+      $res2 = mysqli_query($link, $sql);
+      for($i=0; $i<mysqli_num_rows($res2); ++$i){
+        $file = mysqli_fetch_assoc($res2);
+        $files[] = $file;
+      }
+    } else {
+      $files[] = $row;
+    }
+    $userID = $files[0]['userID'];
+    $sql = 'SELECT name FROM users WHERE id = ' . $userID;
+    $res = mysqli_query($link, $sql);
+    $owner = mysqli_fetch_assoc($res)['name'];
   } else {
     $success = false;
   }
-  echo json_encode([$success, $files, $filecount, $slug, $assetID, $sql]);
+  echo json_encode([$success, $files, $owner, $filecount, $slug, $assetID, $sql]);
 ?>

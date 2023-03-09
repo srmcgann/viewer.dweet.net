@@ -13,7 +13,7 @@
       @click="load()"
       class="file"
       :ref="file.id"
-      :title="`open ${file.name}`"
+      :title="`view ${file.name}`"
     >
     <div class="fileName" v-html="file.name" :ref="'name_'+file.hash"></div>
     </div>
@@ -55,7 +55,7 @@ export default {
         this.state.view(this.state.fileViewerURL + '/?url=' + this.file.hash)
       } else {
         if(this.file.type == 'folder'){
-          window.location.href+=this.file.name+'/'
+          //window.location.href+=this.file.name+'/'
         } else {
           this.downloadFile()
         }
@@ -125,15 +125,15 @@ export default {
       thumbEl.style.position = "absolute"
       this.state.curFileDragging = thumbEl
       this.state.curFileDragging.file = this.file
-      console.log(this.dropzone)
+      //console.log(this.dropzone)
       this.state.curFileDragging.dropzone = this.dropzone
       this.state.cursorX = rect.x - e.pageX 
       this.state.cursorY = rect.y - e.pageY
     }
     if(this.file.type.indexOf('image')!==-1){
-      thumbEl.style.backgroundSize = 'cover'
-      thumbEl.style.repeat = 'no-repeat'
-      thumbEl.style.position = 'center center'
+      thumbEl.style.backgroundRepeat = 'no-repeat'
+      thumbEl.style.backgroundPosition = 'center center'
+      thumbEl.style.backgroundSize = 'contain'
       thumbEl.style.backgroundImage = `url(${this.state.assetsURL + '/' + this.file.hash})`
     }
     let fileElement = this.$refs['name_'+this.file.hash]
@@ -149,7 +149,7 @@ export default {
       fileElement.style.color = '#fff'
       fileElement.style.cursor = 'default'
     }
-    this.load()
+    if(this.state.loggedinUserFiles.length == 1) this.load()
   }
 }
 

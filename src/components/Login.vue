@@ -41,6 +41,7 @@ export default {
   },
   methods:{
     login(){
+      return
       if(!this.loginPassword || !this.loginUserName) return
       let sendData = {
         user: this.loginUserName,

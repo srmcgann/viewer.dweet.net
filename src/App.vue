@@ -42,6 +42,7 @@ export default {
         loggedinUserEmail: '',
         loggedinUserName: '',
         loggedinUserHash: '',
+        loaded: false,
         parentFolderDropTarget: null,
         cursorX: null,
         cursorY: null,
@@ -88,7 +89,7 @@ export default {
       this.state.loggedinUserLocation = ''
       this.state.loggedinUserFiles = []
       this.state.loggedin = false
-      window.location.reload()
+      //window.location.reload()
     },
     alphaToDec(val){
       let pow=0
@@ -153,6 +154,7 @@ export default {
       return fetchObj
     },
     loadLoggedInUserData(){
+      return
       let sendData = {
         user: this.state.loggedinUserName,
         passhash: this.state.loggedinUserHash
@@ -167,11 +169,11 @@ export default {
             })
             this.state.loggedinUserFiles = data[1]
             let s = window.location.origin+'/'+this.decToAlpha(this.state.loggedinUserID)+this.state.loggedinUserLocation
-            window.history.pushState(s, null, s)
+            //window.history.pushState(s, null, s)
             this.$nextTick(()=>this.state.positionFilesAbsolutely())
           })
         }else{
-          console.log('loadUserData[App.vue]',data)
+          //console.log('loadUserData[App.vue]',data)
           alert('there was an error loading user data. consarnit!')
         }
       })
@@ -260,11 +262,11 @@ export default {
             passhash = pair[1]
           break
           case 'basicIcons':
-            console.log('basicIcons: '+pair[1])
+            //console.log('basicIcons: '+pair[1])
             this.state.loggedinUserBasicIcons = !!!eval(pair[1]) 
           break
           case 'snapToGrid':
-            console.log('snapToGrid: '+pair[1])
+            //console.log('snapToGrid: '+pair[1])
             this.state.loggedinUserSnapToGrid = !!!eval(pair[1])
           break
         }
@@ -279,7 +281,7 @@ export default {
         fetch(this.state.baseURL + '/cookieLogin.php',  this.state.fetchObj(sendData))
         .then(json=>json.json()).then(data=>{
           if(data[0]){
-            console.log('cookieLogin.php[App.vue]',data)
+            //console.log('cookieLogin.php[App.vue]',data)
             this.state.loggedin = true
             this.state.loggedinUser = data[1]
             this.state.token = data[1].passhash
@@ -308,7 +310,7 @@ export default {
         passhash: this.state.loggedinUserHash,
         src: src.id
       }
-      console.log(sendData)
+      //console.log(sendData)
       fetch(this.state.baseURL + '/moveFileToParent.php',  this.state.fetchObj(sendData))
       .then(json=>json.json()).then(data=>{
         console.log(data)
@@ -340,16 +342,19 @@ export default {
       })
     },
     loadAsset(slug){
+      this.state.loaded = true
+      slug = slug.replaceAll('/','')
       let sendData = {
         slug
       }
       fetch(this.state.baseURL + '/loadAsset.php',  this.state.fetchObj(sendData))
       .then(json=>json.json()).then(data=>{
         if(data[0]){
-          console.log('loadAsset[viewer].php[App.vue]',data)
-          this.state.loggedinUserFiles = [] //data[1]
+          //console.log('loadAsset[viewer].php[App.vue]',data)
+          this.state.loggedinUserFiles = data[1]
           this.$nextTick(()=>{
             this.state.loggedin = true
+            this.state.loggedinUserName = data[2]
             this.state.loggedinUserFiles = data[1]
             this.$nextTick(()=>this.state.positionFilesAbsolutely())
           })
@@ -365,10 +370,10 @@ export default {
         e.stopPropagation()
         if(this.state.curFileDragging != null && this.state.button){
           if(this.state.loggedinUserLocation != '/'){
-            this.state.parentFolderDropTarget.style.backgroundColor = '#f004'
+            this.state.parentFolderDropTarget.style.backgroundColor = '#f000'
           }
           this.state.loggedinUserFiles.map(v=>{
-            v.dragHandle.style.backgroundColor = '#f004'
+            v.dragHandle.style.backgroundColor = '#f000'
             v.rect = v.fileDiv.getBoundingClientRect()
             v.dragHandleRect = v.dragHandle.getBoundingClientRect()
           })
@@ -416,7 +421,7 @@ export default {
           }
         }
 
-        if(e.button == 0){
+        if(e.button == 0 && this.state.curFileDragging){
           this.state.button = false
           this.state.curFileDragging.file = null
           this.state.curFileDragging = null
@@ -425,7 +430,7 @@ export default {
     }
   },
   mounted(){
-    
+    if(this.state.loaded) return
     this.state.view = this.view
     this.state.login = this.login
     this.state.logout = this.logout
@@ -442,6 +447,7 @@ export default {
     this.state.positionFilesAbsolutely = this.positionFilesAbsolutely
     this.checkCookie()
     this.setupListeners()
+    console.log(window.globalAsset)
     this.loadAsset(window.globalAsset)
   }
 }
@@ -472,7 +478,7 @@ html, body{
 .fileDiv{
   padding: 0px;
   padding-top:20px;
-  background: #000;
+  background: #0004;
   position: relative;
   display: inline-block;
   max-width: 125px;

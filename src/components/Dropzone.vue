@@ -14,7 +14,10 @@
   >
     <DZTools v-if="1" :state="state" :caption="caption"/>
     <div v-if="!showProgress && !finished">
-      <div v-for="(file, idx) in state.loggedinUserFiles" :key="idx" class="fileContainer">
+      <div v-if="this.state.loaded && this.state.loggedinUserFiles.length == 0">
+        nothing to see here!
+      </div>
+      <div v-else v-for="(file, idx) in state.loggedinUserFiles" :key="idx" class="fileContainer">
         <File :state="state" :file="file" :dropzone="dropzone"/>
       </div>
     </div>
@@ -247,7 +250,7 @@ export default {
   },
   mounted(){
     this.dropzone = this.$refs['drop_zone_viewer']
-    console.log(this.dropzone)
+    //console.log(this.dropzone)
     window.onmousemove=()=>{
       this.draggingOver = false
     }
@@ -261,7 +264,7 @@ export default {
     padding: 20px;
     padding-top: 5px;
     color: #fff;
-    background: #333;
+    background: #102;
     display: inline-block;
     margin: 0;
     width: calc(100vw - 40px);

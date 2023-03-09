@@ -1,13 +1,25 @@
+<?
+  require('db.php');
+?>
 <!DOCTYPE html>
 <html lang="">
   <head>
+
+      <meta property="og:title" content="<?=$meta['title']?>">
+      <meta property="og:type" content="website" />
+      <meta property="og:description" content="<?=$meta['description']?>">
+      <meta property="og:image" content="<?=$meta['image']?>">
+      <meta property="og:url" content="<?=$meta['url']?>">
+      <meta name="twitter:card" content="<?=$meta['twitter:card']?>">
+
     <script>
       window.globalAsset = '<?=$_GET['asset']?>'
+      console.log('[index.html]', window.globalAsset)
     </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>pshare</title>
+    <title><?=$meta['title']?></title>
     <script src="/scripts/vue.global.js"></script>
   </head>
   <body>

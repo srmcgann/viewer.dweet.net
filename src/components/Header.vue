@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <div
-      v-if="0 && state.loggedin"
-      v-html="headerText()"
+      v-if="state.loggedin"
+      v-html="ownerText()"
     ></div>
     <HeaderTools v-if="1" :state="state"/>
   </div>
@@ -22,6 +22,9 @@ export default {
     }
   },
   methods:{
+    ownerText(){
+      return this.state.loggedinUserName + ' has shared these file(s) with you! <3'
+    },
     headerText(){
       if(this.state.loggedin){
         let s = '<button onclick="window.location.href=\'/\'" style="min-width:25px" class="button">top</button><button onclick="l=window.location.href.split(\'/\');l.pop();l.pop();l=l.join(\'/\');window.location.href=l+\'/\'" style="min-width:25px" class="button">up</button>'
