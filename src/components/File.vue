@@ -9,14 +9,32 @@
       ref="dragHandle"
       @mousedown="mousedown"
     ></div>
+    <div v-if="0" class="fileButtons">
+      <label :for="'privateCheckbox' + file.id" :key="'cblabel'+file.id" class="checkboxLabel" style="margin:2px;display:unset;transform: scale(.75);" :title="'toggle public visibility of this '+(+file.folder?'folder':'file')+`\n[`+file.name+' is currently '+(file.private==false?'PUBLIC':'PRIVATE')+']'">
+        <input type="checkbox" :key="'cbkey'+file.id" :id="'privateCheckbox' + file.id" v-model="file.private" @input="togglePublic()">
+        <span class="checkmark" :class="{'warning': file.private==false}" style=";border: 1px solid #fff8"></span>
+      </label>
+      <button @click="renameFile()" :title="'rename'" class="fileButton renameButton"></button>
+      <button v-if="file.type != 'folder'" @click="downloadFile()" :title="'download file'" class="fileButton downloadButton"></button>
+      <button @click="deleteFile()" :title="'delete'" class="fileButton deleteButton"></button>
+    </div>
     <div
       @click="load()"
       class="file"
       :ref="file.id"
       :title="`view ${file.name}`"
     >
-    <div class="fileName" v-html="file.name" :ref="'name_'+file.hash"></div>
+      <div class="fileName" v-html="file.name" :ref="'name_'+file.hash"></div>
     </div>
+    <a
+      v-if="(file.type == 'folder' || viewableAsset()) && !file.private"
+      class="fileName shareLink"
+      :title="'share link (for: '+file.name+')\nright+click to copy'"
+      v-html="'share'"
+      :ref="'share_'+file.hash"
+      :href="state.shareURL + '/' + state.decToAlpha(file.id)"
+      target="_blank"
+    ></a>
   </div>
 </template>
 
@@ -45,17 +63,21 @@ export default {
         //if(data[0]) this.file.private = !(+this.file.private)
       })
     },
-    viewableAsset(){
-      return this.file.type.indexOf('image') !== -1 ||
-             this.file.type.indexOf('video') !== -1 ||
-             this.file.type.indexOf('audio') !== -1
+    share(){
+      if(this.viewableAsset()){
+        window.open(this.state.shareURL + '/' + this.state.decToAlpha(this.file.id), '_blank')
+      }
     },
     load(){
       if(this.viewableAsset()){
-        this.state.view(this.state.fileViewerURL + '/?url=' + this.file.hash)
+        if(this.file.type == 'generative'){
+          this.state.view(this.state.fileViewerURL + '/generative.php?url=' + this.file.hash)
+        } else {
+          this.state.view(this.state.fileViewerURL + '/?url=' + this.file.hash)
+        }
       } else {
         if(this.file.type == 'folder'){
-          //window.location.href+=this.file.name+'/'
+          window.location.href+=this.file.name+'/'
         } else {
           this.downloadFile()
         }
@@ -105,6 +127,12 @@ export default {
           }
         })
       }
+    },
+    viewableAsset(){
+      return this.file.type.indexOf('image') !== -1 ||
+             this.file.type.indexOf('video') !== -1 ||
+             this.file.type.indexOf('audio') !== -1 ||
+             this.file.type.indexOf('generative') !== -1
     }
   },
   mounted(){
@@ -125,10 +153,15 @@ export default {
       thumbEl.style.position = "absolute"
       this.state.curFileDragging = thumbEl
       this.state.curFileDragging.file = this.file
-      //console.log(this.dropzone)
       this.state.curFileDragging.dropzone = this.dropzone
       this.state.cursorX = rect.x - e.pageX 
       this.state.cursorY = rect.y - e.pageY
+    }
+    if(this.file.type.indexOf('generative') !== -1){
+      thumbEl.style.backgroundRepeat = 'no-repeat'
+      thumbEl.style.backgroundPosition = 'center center'
+      thumbEl.style.backgroundSize = 'contain'
+      thumbEl.style.backgroundImage = 'url(https://jsbot.cantelope.org/uploads/1ALBH1.png)'
     }
     if(this.file.type.indexOf('image')!==-1){
       thumbEl.style.backgroundRepeat = 'no-repeat'
@@ -136,20 +169,37 @@ export default {
       thumbEl.style.backgroundSize = 'contain'
       thumbEl.style.backgroundImage = `url(${this.state.assetsURL + '/' + this.file.hash})`
     }
-    let fileElement = this.$refs['name_'+this.file.hash]
-    //fileElement.style.left = this.file.X + 'px'
-    //fileElement.style.top = this.file.Y + 'px'
-    fileElement.onmouseover = () => {
-      fileElement.style.background = '#0f0'
-      fileElement.style.color = '#000';
-      fileElement.style.cursor = 'pointer'
+    if(typeof this.$refs['name_' + this.file.hash] != 'undefined'){
+      let fileElement = this.$refs['name_'+this.file.hash]
+      //fileElement.style.left = this.file.X + 'px'
+      //fileElement.style.top = this.file.Y + 'px'
+      fileElement.onmouseover = () => {
+        fileElement.style.background = '#0f0'
+        fileElement.style.color = '#000';
+        fileElement.style.cursor = 'pointer'
+      }
+      fileElement.onmouseleave = () => {
+        fileElement.style.background = '#033'
+        fileElement.style.color = '#fff'
+        fileElement.style.cursor = 'default'
+      }
     }
-    fileElement.onmouseleave = () => {
-      fileElement.style.background = '#033'
-      fileElement.style.color = '#fff'
-      fileElement.style.cursor = 'default'
+    if(typeof this.$refs['share_' + this.file.hash] != 'undefined'){
+      let fileElement2 = this.$refs['share_'+this.file.hash]
+      //fileElement.style.left = this.file.X + 'px'
+      //fileElement.style.top = this.file.Y + 'px'
+      fileElement2.onmouseover = () => {
+        fileElement2.style.background = '#0f0'
+        fileElement2.style.color = '#000';
+        fileElement2.style.cursor = 'pointer'
+      }
+      fileElement2.onmouseleave = () => {
+        fileElement2.style.background = '#033'
+        fileElement2.style.color = '#fff'
+        fileElement2.style.cursor = 'default'
+      }
     }
-    if(this.state.loggedinUserFiles.length == 1) this.load()
+    this.load()
   }
 }
 
@@ -205,6 +255,7 @@ export default {
     background: #033;
     padding: 5px;
     margin: 5px;
+    margin-top: 10px;
     position: relative;
     z-index: 100;
     border-radius: 2px;
@@ -215,6 +266,17 @@ export default {
     padding-left: 10px;
     padding-right: 10px;
     line-height: 1;
+  }
+  .shareLink{
+    padding: 5px;
+    display: inline-block;
+    margin: 0px;
+    margin-bottom: 5px;
+    min-width: 95px;
+    vertical-align: top;
+    font-size: 10px;
+    color: #fff;
+    text-decoration: none;
   }
   .thumb{
     width: 100%;
@@ -235,7 +297,7 @@ export default {
   }
   .file{
     padding: 0px;
-    padding-top: 0px;
+    padding-top: 6px;
     display: inline-block;
     margin: 5px;
     min-width:70px;

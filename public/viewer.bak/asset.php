@@ -31,30 +31,8 @@
       }
     }
     if($found){
-      if(strpos(strtolower($type), 'zip') !== false){
-        $sql = 'SELECT * FROM files WHERE hash = "' . $file . '"';
-        $res = mysqli_query($link, $sql);
-        $check = false;
-        if(mysqli_num_rows($res)){
-          $row = mysqli_fetch_assoc($res);
-          if($row['type'] == 'generative'){
-            $check = true;
-            header("Content-type: text/html");
-            @mkdir("./scratch");
-            mkdir("./scratch/$file");
-            shell_exec("unzip $assetsDir/$file -d ./scratch/$file");
-            header("Content-type: text/html");
-            echo "/viewer/scratch/$file";
-          }
-        }
-        if(!$check){
-          header("Content-type: $type");
-          echo file_get_contents("$assetsDir/$file");
-        }
-      } else {
-        header("Content-type: $type");
-        echo file_get_contents("$assetsDir/$file");
-      }
+      header("Content-type: $type");
+      echo file_get_contents("$assetsDir/$file");
     }
   }
 ?>
