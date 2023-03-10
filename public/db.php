@@ -57,7 +57,12 @@
         $image = 'https://jsbot.cantelope.org/uploads/2bceZU.png';
       }
     }
-    $meta['title'] = $row['name'];
+    if($row['type'] == 'generative'){
+      $image = 'https://jsbot.cantelope.org/uploads/1ALBH1.png';
+      $meta['title'] = str_replace('.zip', '', $row['name']) . " (generative)";
+    } else {
+      $meta['title'] = $row['name'];
+    }
     $meta['image'] = $image;
     $meta['url'] = 'https://viewer.dweet.net/' . $_GET['asset'];
     $meta['twitter:card'] = $image;
